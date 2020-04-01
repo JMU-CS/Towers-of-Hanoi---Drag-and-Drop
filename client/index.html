@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Towers of Hanoi</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="shortcut icon" href="fav.png" type="image/x-icon">
+</head>
+
+<body>
+  <div class="header"></div>
+  <div>
+    <div data-stack="1">
+      <!-- <div data-block="100"></div>
+    <div data-block="90"></div>
+    <div data-block="80"></div>
+    <div data-block="70"></div>
+    <div data-block="60"></div>
+    <div data-block="50"></div>
+    <div data-block="40"></div>
+    <div data-block="30"></div> -->
+    </div>
+    <div data-stack="2">
+    </div>
+    <div data-stack="3">
+    </div>
+  </div>
+  <div id="announce-game-won"></div>
+  <div class="controls">
+    <button id="reset">RESET</button>
+  </div>
+  <script type="text/javascript"
+    src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-alpha1/jquery.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="jquery.ui.touch-punch.min.js"></script>
+  <script type="text/javascript" src="TowersOfHanoi.js"></script>
+  <script>
+    var socket = io();
+  </script>
+</body>
+
+</html>

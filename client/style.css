@@ -1,0 +1,64 @@
+[data-stack] {
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    -webkit-align-items: center;
+    display: -webkit-flex;
+    height: 101px;
+    background-color: aliceblue;
+    margin: 25px;
+}
+
+[data-stack]:last-child {
+    border: 2px dashed #450084;
+}
+
+[data-block] {
+    width: 25px;
+    float: left;
+}
+
+[data-block="30"] {
+    height: 30px;
+    background-color: #d23be7;
+}
+
+[data-block="40"] {
+    height: 40px;
+    background-color: #450084;
+}
+
+[data-block="50"] {
+    height: 50px;
+    background-color: #5498B6;
+}
+
+[data-block="60"] {
+    height: 60px;
+    background-color: #009698;
+}
+
+[data-block="70"] {
+    height: 70px;
+    background-color: #a3e048;
+}
+
+[data-block="80"] {
+    height: 80px;
+    background-color: #FFBD00;
+}
+
+[data-block="90"] {
+    height: 90px;
+    background-color: #eb7532;
+}
+
+[data-block="100"] {
+    height: 100px;
+    background-color: #A4232B;
+}
+
+#announce-game-won {
+    font-size: 50px;
+    text-align: center;
+}

@@ -1,0 +1,23 @@
+{
+  "name": "real-towers",
+  "version": "1.0.0",
+  "description": "real time collab towers",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JMU-CS/Towers-of-Hanoi---Drag-and-Drop.git"
+  },
+  "author": "Michael Stewart",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JMU-CS/Towers-of-Hanoi---Drag-and-Drop/issues"
+  },
+  "homepage": "https://github.com/JMU-CS/Towers-of-Hanoi---Drag-and-Drop#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "socket.io": "^2.3.0"
+  }
+}
