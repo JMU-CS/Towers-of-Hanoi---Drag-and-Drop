@@ -34,10 +34,11 @@ io.on('connection', function (socket) {
         GAME_ROOM_TO_GAME_INFO[CLIENT_TO_ROOM[socket.id]].clients = GAME_ROOM_TO_GAME_INFO[CLIENT_TO_ROOM[socket.id]].clients.filter(id => id !== socket.id)
       }
       delete CLIENT_TO_ROOM[socket.id]
-    } 
+    }
     if (!(info.gameid in GAME_ROOM_TO_GAME_INFO)) {
       GAME_ROOM_TO_GAME_INFO[info.gameid] = info
       GAME_ROOM_TO_GAME_INFO[info.gameid].clients = [socket.id]
+      GAME_ROOM_TO_GAME_INFO[info.gameid].moves = 0
     } else {
       if (GAME_ROOM_TO_GAME_INFO[info.gameid].difficulty === info.difficulty) {
         if ('state' in GAME_ROOM_TO_GAME_INFO[info.gameid]) {
@@ -71,10 +72,14 @@ io.on('connection', function (socket) {
   socket.on('new-state', function (newState) {
     console.log(CLIENT_TO_ROOM[socket.id].gameid, 'new-state', newState)
     GAME_ROOM_TO_GAME_INFO[CLIENT_TO_ROOM[socket.id].gameid].state = newState
+    GAME_ROOM_TO_GAME_INFO[CLIENT_TO_ROOM[socket.id].gameid].moves++
+    socket.to(CLIENT_TO_ROOM[socket.id].gameid).emit('moves', { moves: GAME_ROOM_TO_GAME_INFO[CLIENT_TO_ROOM[socket.id].gameid].moves })
   })
   socket.on('request-reset', (info) => {
     console.log(CLIENT_TO_ROOM[socket.id].gameid, 'request-reset')
     if (GAME_ROOM_TO_GAME_INFO[CLIENT_TO_ROOM[socket.id].gameid].clients.length === 1) {
+      delete GAME_ROOM_TO_GAME_INFO[CLIENT_TO_ROOM[socket.id].gameid].state
+      GAME_ROOM_TO_GAME_INFO[info.gameid].moves = 0
       socket.emit('reset')
     }
     GAME_ROOM_TO_GAME_INFO[CLIENT_TO_ROOM[socket.id].gameid].resetKey = info.resetKey
@@ -87,6 +92,7 @@ io.on('connection', function (socket) {
     console.log(CLIENT_TO_ROOM[socket.id].gameid, 'do-reset')
     if (GAME_ROOM_TO_GAME_INFO[CLIENT_TO_ROOM[socket.id].gameid].resetKey === info.resetKey) {
       delete GAME_ROOM_TO_GAME_INFO[CLIENT_TO_ROOM[socket.id].gameid].state
+      GAME_ROOM_TO_GAME_INFO[info.gameid].moves = 0
       socket.to(CLIENT_TO_ROOM[socket.id].gameid).emit('reset')
     }
   })

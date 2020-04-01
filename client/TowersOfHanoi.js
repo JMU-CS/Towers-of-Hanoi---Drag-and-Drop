@@ -73,7 +73,7 @@ $(function () {
       window.history.pushState({ path: newUrl }, '', newUrl)
     }
   }
-  
+
   function serialize () {
     let serialized = []
     $('[data-stack]').map((_, elem) =>
@@ -95,6 +95,11 @@ $(function () {
         $('[data-block]:last-child').draggable(draggableData)
         var state = serialize()
         socket.emit('new-state', state)
+        if ($('#moves').text() && parseInt($('#moves').text()) >= 0) {
+          $('#moves').text(parseInt($('#moves').text()) + 1)
+        } else {
+          $('#moves').text(0)
+        }
         saveState(state)
         // checkForWin
         checkForWin()
@@ -179,6 +184,7 @@ $(function () {
     resetButtonMsg = DEFAULT_RESET_BTN_MSG
     resetKey = makeid(8)
     $('[data-block]:last-child').draggable(draggableData)
+    $('#moves').text(0)
   }
 
   socket.on('start', function (info) {
@@ -234,6 +240,11 @@ $(function () {
       )
     )
     $('[data-block]:last-child').draggable(draggableData)
+    if ('moves' in info) {
+      $('#moves').text(info.moves)
+    } else {
+      $('#moves').text(0)
+    }
     saveState(info.state)
   }
 
@@ -266,5 +277,9 @@ $(function () {
 
   socket.on('reset', () => {
     resetGame()
+  })
+
+  socket.on('moves', info => {
+    $('#moves').text(info.moves)
   })
 })

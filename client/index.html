@@ -31,15 +31,23 @@
   <div class="controls">
     <button id="reset">RESET</button>
   </div>
+  <div id="moves">0</div>
   <script type="text/javascript"
     src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-alpha1/jquery.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
   <script src="/socket.io/socket.io.js"></script>
   <script src="jquery.ui.touch-punch.min.js"></script>
   <script type="text/javascript" src="TowersOfHanoi.js"></script>
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-113465330-4"></script>
   <script>
-    var socket = io();
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+
+    gtag('config', 'UA-113465330-4');
   </script>
+
 </body>
 
 </html>
