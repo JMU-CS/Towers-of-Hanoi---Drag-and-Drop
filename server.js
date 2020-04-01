@@ -1,4 +1,4 @@
-const PORT = 80
+const PORT = process.env.PORT || 80
 var express = require('express')
 var app = express()
 var http = require('http').createServer(app)
