@@ -5,6 +5,7 @@ const DEFAULT_DIFFICULTY = 4
 const STARTING_WIDTH = 100
 const DEFAULT_RESET_BTN_MSG = 'request-reset'
 var resetButtonMsg = DEFAULT_RESET_BTN_MSG
+var chosenDifficulty = DEFAULT_DIFFICULTY
 
 function makeid (length) {
   var result = ''
@@ -23,7 +24,7 @@ $(function () {
   // $('.header').load('../header.html')
   resetGame()
   var gameOver = false
-  var $stacks = $('[data-stack]')
+  // var $stacks = $('[data-stack]')
   // since only last child of every stack is allowed to make the move,
   // give them class movable
   $('[data-block]:last-child').addClass('movable')
@@ -54,7 +55,7 @@ $(function () {
       })
     }
   }
-  $('[data-block]:last-child').draggable(draggableData)
+  
 
   function saveState (state) {
     var newString = window.location.search
@@ -109,10 +110,7 @@ $(function () {
     }
   }
   // only when droppable is true, can a movable block be dropped
-  $stacks.droppable({
-    accept: '.movable',
-    drop: dropFunction
-  })
+  
 
   function goodToDrop ($stack, $block) {
     var $lastBlock = $stack.children().last()
@@ -141,11 +139,40 @@ $(function () {
 
   function fixLocationDifficulty (diff) {
     console.log('fix')
+    chosenDifficulty = diff
     var newString = window.location.search
     const diffReg = /difficulty=[^&]+/
     newString = newString.replace(diffReg, `difficulty=${diff}`)
     var newUrl = window.location.protocol + '//' + window.location.host + window.location.pathname + newString
     window.history.pushState({ path: newUrl }, '', newUrl)
+  }
+
+  function fixGameId (gameid) {
+    console.log('fix')
+    var newString = window.location.search
+    const diffReg = /gameid=[^&]+/
+    newString = newString.replace(diffReg, `gameid=${gameid}`)
+    var newUrl = window.location.protocol + '//' + window.location.host + window.location.pathname + newString
+    window.history.pushState({ path: newUrl }, '', newUrl)
+  }
+
+  function resetBlocks () {
+    $('[data-block]').remove()
+    let resetString = ''
+    for (let index = 0; index < chosenDifficulty; index++) {
+      resetString += `<div data-block="${STARTING_WIDTH - 10 * index}"></div>`
+    }
+    // console.log('difficulty', difficulty, resetString)
+    $('[data-stack="1"]').html(resetString)
+    $('[data-stack="2"]').empty()
+    $('[data-stack="3"]').empty()
+    $('[data-block]').removeClass('movable')
+    $('[data-block]:last-child').addClass('movable')
+    $('[data-block]:last-child').draggable(draggableData)
+    $('[data-stack]').droppable({
+      accept: '.movable',
+      drop: dropFunction
+    })
   }
 
   function resetGame () {
@@ -157,7 +184,11 @@ $(function () {
     if (params.get('difficulty')) {
       difficulty = parseInt(params.get('difficulty'))
       if (difficulty === null || typeof (difficulty) !== 'number' || difficulty < 1 || difficulty > 8) {
+        console.log('got diff ', difficulty, ' fix it')
         fixLocationDifficulty(DEFAULT_DIFFICULTY)
+      } else {
+        chosenDifficulty = difficulty
+        console.log('difficulty', difficulty)
       }
     } else {
       updateLocation(`difficulty=${difficulty}`)
@@ -168,22 +199,15 @@ $(function () {
     } else {
       updateLocation(`gameid=${gameid}`)
     }
-    socket.emit('game-info', { difficulty: difficulty, gameid: gameid })
-    let resetString = ''
-    for (let index = 0; index < difficulty; index++) {
-      resetString += `<div data-block="${STARTING_WIDTH - 10 * index}"></div>`
-    }
-    // console.log('difficulty', difficulty, resetString)
-    $('[data-stack="1"]').html(resetString)
-    $('[data-stack="2"]').empty()
-    $('[data-stack="3"]').empty()
+    resetBlocks()
+    socket.emit('game-info', { difficulty: difficulty, gameid: gameid, state: serialize() })
     $('#announce-game-won').empty()
     gameOver = false
     $('#reset').prop('disabled', false)
     $('.controls').css('background-color', 'inherit')
     resetButtonMsg = DEFAULT_RESET_BTN_MSG
     resetKey = makeid(8)
-    $('[data-block]:last-child').draggable(draggableData)
+    
     $('#moves').text(0)
   }
 
@@ -233,6 +257,8 @@ $(function () {
   })
 
   function deserialize (info) {
+    console.log('deserialize', info)
+    chosenDifficulty = info.difficulty
     $('[data-block]').appendTo('body')
     info.state.forEach((stack, idx) =>
       stack.forEach((block) =>
@@ -245,16 +271,22 @@ $(function () {
     } else {
       $('#moves').text(0)
     }
+    if ('gameid' in info) {
+      fixGameId(info.gameid)
+    }
     saveState(info.state)
   }
 
   socket.on('start-state', function (info) {
+    chosenDifficulty = info.difficulty
+    resetBlocks()
     deserialize(info)
   })
 
   socket.on('difficulty-correction', function (info) {
     fixLocationDifficulty(info.difficulty)
     if ('state' in info) {
+      resetBlocks()
       deserialize(info)
     }
   })
